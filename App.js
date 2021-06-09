@@ -1,16 +1,26 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import {
-  View,
-  Text
+    View,
+    Text,
+    SafeAreaView,
+    StatusBar,
+    Platform
 } from 'react-native'
-export class App extends Component {
-  render() {
-    return (
-      <View style={{flex : 1, backgroundColor : 'white', justifyContent : 'center', alignItems : 'center'}}>
-        <Text>app.js</Text>
-      </View>
-    )
-  }
-}
+import Routes from './src/navigation/routes'
+import {PersistGate} from 'redux-persist/integration/react'
+import {Provider} from 'react-redux'
+import {store,persistor} from './src/redux/store'
 
-export default App
+
+const App = () =>{
+    return(
+        <View style={{flex : 1}}>
+            <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                    <Routes/>
+                </PersistGate>
+            </Provider>
+        </View>
+    )
+}
+export default App;
