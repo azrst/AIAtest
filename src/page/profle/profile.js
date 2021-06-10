@@ -3,13 +3,18 @@ import {
     View,
     Text
 } from 'react-native'
+import {connect} from 'react-redux'
 
-export class profile extends Component {
+export class Profile extends Component {
     constructor(prosp){
         super(prosp)
         this.state={
 
         }
+    }
+
+    componentDidMount(){
+        console.log(this.props.user.savePost)
     }
 
     searchRender(){
@@ -31,4 +36,8 @@ export class profile extends Component {
     }
 }
 
-export default profile
+const mapStateToProps = ({user}) => ({
+    user: user,
+});
+
+export default connect(mapStateToProps)(Profile);
