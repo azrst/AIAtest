@@ -5,10 +5,27 @@ import {
 } from 'react-native'
 
 export class profile extends Component {
+    constructor(prosp){
+        super(prosp)
+        this.state={
+
+        }
+    }
+
+    searchRender(){
+        return(
+            <View>
+                <Text>Search</Text>
+            </View>
+        )
+    }
+
     render() {
         return (
             <View>
-                <Text>profile.js</Text>
+                <View>
+                    {this.searchRender()}
+                </View>
             </View>
         )
     }

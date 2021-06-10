@@ -7,7 +7,8 @@ import {
 	Image,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    Text
 } from 'react-native'
 import Home from '../page/home/home'
 import Profile from '../page/profle/profile'
@@ -53,18 +54,27 @@ function HomeBottom() {
                 style:{
                     position : 'absolute',
                     bottom : 20,
-                    left  : 20,
-                    right : 20,
+                    left  : 10,
+                    right : 10,
                     elevation : 0,
                     borderRadius : 10,
-                    backgroundColor : '#fff',
+                    backgroundColor : 'rgba(255,255,255,0.95)',
                     height : 80,
                     ...style.shadow
                 },
                 showLabel : false
 			}}
 		>
-			<Tab.Screen name="Home" component={Home} />
+			<Tab.Screen name="Home" component={Home} 
+                options={{
+                    tabBarIcon : ({focused}) =>(
+                        <View style={{paddingTop : 20,alignItems : 'center'}}>
+                            <Icon name={'google-home'} size={30} color={(focused)? colors.blueButton : colors.greyBold }/>
+                            <Text style={{color : (focused)? colors.blueButton : colors.greyBold}}>Home</Text>
+                        </View>
+                    ),
+                }}
+            />
             <Tab.Screen name="AddFeed" component={AddFeed} 
                 options={{
                     tabBarIcon : ({focused}) =>(
@@ -75,10 +85,18 @@ function HomeBottom() {
                     tabBarButton : (props) =>(
                         <CostomTabBar {...props}/>
                     ),
-                    tabBarLabel : ''
                 }}
             />
-            <Tab.Screen name="Profile" component={Profile} />
+            <Tab.Screen name="Profile" component={Profile} 
+                options={{
+                    tabBarIcon : ({focused}) =>(
+                        <View style={{paddingTop : 20,alignItems : 'center'}}>
+                            <Icon name={'face-profile'} size={30} color={(focused)? colors.blueButton : colors.greyBold }/>
+                            <Text style={{color : (focused)? colors.blueButton : colors.greyBold}}>Saved</Text>
+                        </View>
+                    ),
+                }}
+            />
 		</Tab.Navigator>
   );
 }
