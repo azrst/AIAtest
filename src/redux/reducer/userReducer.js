@@ -1,13 +1,13 @@
 const initialState = {
-    savePost : null,
+    savePost : [],
 }
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "SET_CONTACT":
+        case "SET_SAVEPOST":
             return {
                 ...state,
-                savePost : action.contactData
+                savePost : action.savePost
             };
         default:
             return state;

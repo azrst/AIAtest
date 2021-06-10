@@ -13,8 +13,8 @@ const persistConfig = {
   // Storage Method (React Native)
   storage: AsyncStorage,
   // Whitelist (Save Specific Reducers)
-  // whitelist: ['authReducer'],
-//   blacklist: ['countriesReducer']
+    // whitelist: ['userReducer'],
+  //   blacklist: ['countriesReducer']
 };
 // Middleware: Redux Persist Persisted Reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);

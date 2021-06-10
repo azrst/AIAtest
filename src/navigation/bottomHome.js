@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     StyleSheet,
-    Text
+    Text,
+    Platform
 } from 'react-native'
 import Home from '../page/home/home'
 import Profile from '../page/profle/profile'
@@ -68,7 +69,7 @@ function HomeBottom() {
 			<Tab.Screen name="Home" component={Home} 
                 options={{
                     tabBarIcon : ({focused}) =>(
-                        <View style={{paddingTop : 20,alignItems : 'center'}}>
+                        <View style={{paddingTop : (Platform.OS=='ios')? 20 : 0,alignItems : 'center'}}>
                             <Icon name={'google-home'} size={30} color={(focused)? colors.blueButton : colors.greyBold }/>
                             <Text style={{color : (focused)? colors.blueButton : colors.greyBold}}>Home</Text>
                         </View>
@@ -90,7 +91,7 @@ function HomeBottom() {
             <Tab.Screen name="Profile" component={Profile} 
                 options={{
                     tabBarIcon : ({focused}) =>(
-                        <View style={{paddingTop : 20,alignItems : 'center'}}>
+                        <View style={{paddingTop : (Platform.OS=='ios')? 20 : 0,alignItems : 'center'}}>
                             <Icon name={'face-profile'} size={30} color={(focused)? colors.blueButton : colors.greyBold }/>
                             <Text style={{color : (focused)? colors.blueButton : colors.greyBold}}>Saved</Text>
                         </View>

@@ -11,7 +11,8 @@ import {
     StyleSheet,
     ActivityIndicator,
     StatusBar,
-    Animated
+    Animated,
+    TouchableWithoutFeedback
 } from 'react-native'
 import { D } from '../../variable/dimension'
 import {connect} from 'react-redux'
@@ -46,7 +47,7 @@ export class Home extends Component {
         this.setState({headerRender : true})
         Animated.timing(this.state.fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 1500,
         useNativeDriver: true
         }).start();
     };
@@ -59,12 +60,12 @@ export class Home extends Component {
         }).start()
     };
     
-    toastCall = () =>{
+    toastCall = (type,text) =>{
         Toast.show({
-            type: 'info',
+            type: (!type)?'info':type,
             position: 'top',
-            text1: 'text undifined',
-            text2: 'text2 undifined',
+            text1: (!text)? 'undefined' : text,
+            // text2: 'text2 undifined',
             visibilityTime: 3000,
             autoHide: true,
             topOffset: 70,
@@ -109,7 +110,7 @@ export class Home extends Component {
                 console.log('status : ',res.status)
                 console.log('data : ',res.data.items.length)
                 let rest = await res.data.items
-                let dat = await this.state.feedData.concat(this.state.feedData.splice(0,10))
+                let dat = await this.state.feedData
                 res.data.items.map((item,index)=>{
                     let obj = {save:false,love:false}
                     let final = {...rest[index],...obj}
@@ -164,6 +165,30 @@ export class Home extends Component {
         )
     }
 
+    savePostLogic = async (index) =>{
+        let savePost = await this.props.user.savePost
+        var loop = savePost.map(function(e) { return e.media.m ; }).indexOf(this.state.feedData[index].media.m);
+        console.log(loop)
+
+        if(loop<0){
+            savePost.unshift(this.state.feedData[index])
+            this.props.dispatch({type : "SET_SAVEPOST",savePost})
+            let temp = this.state.feedData
+            temp[index].save = !this.state.feedData[index].save
+            this.setState({feedData : temp})
+            this.toastCall('success',`Success save photo from ${this.state.feedData[index].author.slice(this.state.feedData[index].author.search('"')+1,this.state.feedData[index].author.length-2)}`)
+        }else{
+            savePost.splice(loop,1)
+            this.props.dispatch({type : "REMOVE_SAVEPOST",savePost})
+
+            let temp = this.state.feedData
+            temp[index].save = !this.state.feedData[index].save
+            this.setState({feedData : temp})
+            this.toastCall('error','Photo removed')
+        }
+        
+    }
+
     feedRender(){
         return(
             <View>
@@ -171,6 +196,7 @@ export class Home extends Component {
                     // numColumns={5}
                     scrollEnabled = {false}
                     data={this.state.feedData}
+                    keyExtractor={(item,index) => index}
                     renderItem={({item,index})=>{
                         // if(item.tags != ''){
                             return(
@@ -193,7 +219,7 @@ export class Home extends Component {
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
-                                        <TouchableOpacity 
+                                        <TouchableWithoutFeedback 
                                             onPress={()=>{
                                                 this.props.navigation.navigate('FeedDetail',{data : this.state.feedData[index]})
                                             }}
@@ -207,7 +233,7 @@ export class Home extends Component {
                                             <View style={[style.shadow,{width : D.width * 90/100, height : D.height * 25/100, borderRadius : 10,marginTop : 15,backgroundColor : '#fff'}]}>
                                                 <Image source={{uri : item.media.m}} style={{width : D.width * 90/100, height : D.height * 25/100, resizeMode : 'cover',borderRadius : 10}}/>
                                             </View>
-                                        </TouchableOpacity>
+                                        </TouchableWithoutFeedback>
                                         <View style={{paddingTop : 10,paddingLeft : 5}}>
                                             <Text style={{color : colors.greyBold}}>{item.date_taken}</Text>
                                         </View>
@@ -231,7 +257,7 @@ export class Home extends Component {
                                             </View>
                                             <View style={{flex : 2/10,justifyContent : 'center',alignItems : 'flex-end'}}>
                                                 <TouchableOpacity onPress={ async ()=>{
-                                                    this.toastCall()
+                                                    this.savePostLogic(index)
                                                 }}>
                                                     <Icon name={(item.save? 'bookmark' : 'bookmark-outline')} size={30} color={(item.save)? colors.greyBold : colors.greyBold}/>
                                                 </TouchableOpacity>
@@ -256,7 +282,6 @@ export class Home extends Component {
                             )
                         // }
                     }}
-                    keyExtractor={(item,index) => index}
                 />
             </View>
         )
@@ -268,7 +293,7 @@ export class Home extends Component {
                 <StatusBar translucent backgroundColor="rgba(255,255,255,0.8)" />
                 <View style={{paddingTop : 30}}>
                     {/* {(this.state.headerRender)?this.header():null} */}
-                    {this.header()}
+                    {/* {this.header()} */}
                 </View>
                 <ScrollView 
                     // scrollEnabled={this.state.scrollBool}
@@ -281,12 +306,12 @@ export class Home extends Component {
                         let positionY = nativeEvent.contentOffset.y
                         // console.log('positionY : ',positionY);
                         if(positionY > 300){
-                            await this.fadeOut()
+                            // await this.fadeOut()
                             // this.setState({headerRender : false})
                         }else if(positionY < 10){
-                            this.setState({headerRender : true},()=>{
-                                this.fadeIn()
-                            })
+                            // this.setState({headerRender : true},()=>{
+                            //     this.fadeIn()
+                            // })
                         }
                         if(isCloseToBottom(nativeEvent) && this.state.scrollBool == true){
                             console.log('bottom reached')
