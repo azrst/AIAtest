@@ -37,7 +37,7 @@ export class Home extends Component {
     }
 
     componentDidMount(){
-        console.log('user : ',this.props.user)
+        // console.log('user : ',this.props.user)
         this.fadeIn()
         this.serviceGetFeed()
     }
@@ -189,6 +189,24 @@ export class Home extends Component {
         
     }
 
+    loveLogic= async (index)=>{
+        let dat = await this.state.feedData
+        dat[index].love = !dat[index].love
+        console.log(dat[index].love)
+
+        // this.setState({feedData : dat})
+
+        // dat[index].love =  !this.state.feedData[index].love
+        this.setState({feedData : dat},()=>{
+            if(this.state.feedData[index].love){
+                this.toastCall('success',`You like photo from ${this.state.feedData[index].author.slice(this.state.feedData[index].author.search('"')+1,this.state.feedData[index].author.length-2)}`)
+            }else{
+                this.toastCall('error',`unlike photo success`)
+            }
+        })
+
+    }
+
     feedRender(){
         return(
             <View>
@@ -240,7 +258,7 @@ export class Home extends Component {
                                         <View style={{flexDirection : 'row',alignItems : 'center',paddingTop : 10,paddingLeft : 0}}>
                                             <View style={{flex : 8/10,flexDirection : 'row',alignItems : 'flex-start'}}>
                                                 <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
-                                                    this.toastCall()
+                                                    this.loveLogic(index)
                                                 }}>
                                                     <Icon name={(item.love? 'heart' : 'heart-outline')} size={23} color={(item.love)? 'red' : colors.black}/>
                                                 </TouchableOpacity>

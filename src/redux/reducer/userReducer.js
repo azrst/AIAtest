@@ -9,6 +9,11 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 savePost : action.savePost
             };
+        case "REMOVE_SAVEPOST":
+            return {
+                ...state,
+                savePost : action.savePost
+            };
         default:
             return state;
     } 
