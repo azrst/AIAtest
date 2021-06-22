@@ -1,7 +1,9 @@
 import * as React from 'react'
-import {NavigationContainer} from '@react-navigation/native'
+
+import { useScrollToTop } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import {
 	View,
 	Image,
@@ -18,6 +20,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../variable/color';
 
 
+var profilePress = false
 const Tab = createBottomTabNavigator();
 const screenOp = {
 	headerShown:false,
@@ -63,18 +66,29 @@ function HomeBottom() {
                     height : 80,
                     ...style.shadow
                 },
-                showLabel : false
+                showLabel : false,
+                navigationOptions: ({ navigation }) => ({
+                    tabBarOnPress: (scene, jumpToIndex) => {
+                        // Called when tab is press
+                        console.log(scene)
+                    },
+                }),
 			}}
+            
 		>
-			<Tab.Screen name="Home" component={Home} 
+			<Tab.Screen name="Home" 
+                component={Home} 
                 options={{
-                    tabBarIcon : ({focused}) =>(
+                    tabBarIcon : ({focused}) => (
                         <View style={{paddingTop : (Platform.OS=='ios')? 20 : 0,alignItems : 'center'}}>
                             <Icon name={'google-home'} size={30} color={(focused)? colors.blueButton : colors.greyBold }/>
                             <Text style={{color : (focused)? colors.blueButton : colors.greyBold}}>Home</Text>
                         </View>
                     ),
                 }}
+                // children={()=>
+                //     <Home/>
+                // }
             />
             <Tab.Screen name="AddFeed" component={AddFeed} 
                 options={{
@@ -88,7 +102,8 @@ function HomeBottom() {
                     ),
                 }}
             />
-            <Tab.Screen name="Profile" component={Profile} 
+            <Tab.Screen name="Profile" 
+                component={Profile}
                 options={{
                     tabBarIcon : ({focused}) =>(
                         <View style={{paddingTop : (Platform.OS=='ios')? 20 : 0,alignItems : 'center'}}>
@@ -97,6 +112,7 @@ function HomeBottom() {
                         </View>
                     ),
                 }}
+                
             />
 		</Tab.Navigator>
   );
