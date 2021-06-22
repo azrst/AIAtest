@@ -167,7 +167,7 @@ export class Home extends Component {
 
     savePostLogic = async (index) =>{
         let savePost = await this.props.user.savePost
-        var loop = savePost.map(function(e) { return e.media.m ; }).indexOf(this.state.feedData[index].media.m);
+        var loop = savePost.map(function(e) { return e.media.m ; }).indexOf(this.state.feedData[index].media.m)
         console.log(loop)
 
         if(loop<0){
@@ -186,7 +186,6 @@ export class Home extends Component {
             this.setState({feedData : temp})
             this.toastCall('error','Photo removed')
         }
-        
     }
 
     loveLogic= async (index)=>{
@@ -212,95 +211,114 @@ export class Home extends Component {
             <View>
                 <FlatList
                     // numColumns={5}
+                    nestedScrollEnabled={true}
                     scrollEnabled = {false}
                     data={this.state.feedData}
                     keyExtractor={(item,index) => index}
                     renderItem={({item,index})=>{
-                        // if(item.tags != ''){
-                            return(
-                                <View style={{borderBottomWidth:(index == this.state.feedData.length-1)?0 : 1,borderColor : colors.greyBorder, marginBottom : 20,paddingBottom : 15}}>
-                                    <View style={{paddingHorizontal : D.width*5/100}}>
-                                        <View style={{flexDirection : 'row',alignItems : 'center'}}>
-                                            <View style={{flex : 8/10,flexDirection : 'row',alignItems : 'center'}}>
-                                                <View style={{width : D.width * 15/100, height : D.width * 15/100, borderRadius : 50, justifyContent :'center', alignItems : 'center',backgroundColor : colors.greyBorder}}>
-                                                    {/* <Image style={{width : 20,height : 20,resizeMode='contain'}} source={{uri : item.}}/> */}
-                                                    <Icon name={'face-profile'} size={55} color={'grey'}/>
-                                                </View>
-                                                <View style={{paddingLeft : 10}}>
-                                                    {/* <Text>{item.author}</Text> */}
-                                                    <Text>{item.author.slice(item.author.search('"')+1,item.author.length-2)}</Text>
-                                                </View>
-                                            </View>
-                                            <View style={{flex : 2/10,alignItems : 'flex-end',justifyContent : 'center'}}>
-                                                <TouchableOpacity>
-                                                    <Icon name={'dots-horizontal'} size={30} />
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                        <TouchableWithoutFeedback 
-                                            onPress={()=>{
-                                                this.props.navigation.navigate('FeedDetail',{data : this.state.feedData[index]})
-                                            }}
-                                            onPressOut={()=>{
-                                                console.log('pressed out')
-                                            }}
-                                            onLongPress={()=>{
-                                                console.log('pressed long')
-                                            }}
-                                        >
-                                            <View style={[style.shadow,{width : D.width * 90/100, height : D.height * 25/100, borderRadius : 10,marginTop : 15,backgroundColor : '#fff'}]}>
-                                                <Image source={{uri : item.media.m}} style={{width : D.width * 90/100, height : D.height * 25/100, resizeMode : 'cover',borderRadius : 10}}/>
-                                            </View>
-                                        </TouchableWithoutFeedback>
-                                        <View style={{paddingTop : 10,paddingLeft : 5}}>
-                                            <Text style={{color : colors.greyBold}}>{item.date_taken}</Text>
-                                        </View>
-                                        <View style={{flexDirection : 'row',alignItems : 'center',paddingTop : 10,paddingLeft : 0}}>
-                                            <View style={{flex : 8/10,flexDirection : 'row',alignItems : 'flex-start'}}>
-                                                <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
-                                                    this.loveLogic(index)
-                                                }}>
-                                                    <Icon name={(item.love? 'heart' : 'heart-outline')} size={23} color={(item.love)? 'red' : colors.black}/>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
-                                                    this.props.navigation.navigate('FeedDetail',{data : this.state.feedData[index]})
-                                                }}>
-                                                    <Icon name={'comment-outline'} size={23} color={colors.black}/>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
-                                                    this.toastCall()
-                                                }}>
-                                                    <Icon name={'share-variant'} size={23} color={colors.black}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                            <View style={{flex : 2/10,justifyContent : 'center',alignItems : 'flex-end'}}>
-                                                <TouchableOpacity onPress={ async ()=>{
-                                                    this.savePostLogic(index)
-                                                }}>
-                                                    <Icon name={(item.save? 'bookmark' : 'bookmark-outline')} size={30} color={(item.save)? colors.greyBold : colors.greyBold}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                        {
-                                            (item.title != '')?
-                                                <View style={{paddingTop : 20,paddingLeft : 5}}>
-                                                    <Text style={{color:colors.black}}>{item.title}</Text>
-                                                </View>
-                                            :null
-                                        }
-                                        {
-                                            (item.tags != '')?
-                                            <View style={{paddingTop : 20,paddingLeft : 5}}>
-                                                <Text style={{color:colors.blueButton}}>{item.tags}</Text>
-                                            </View> 
-                                            :null
-                                        }
-                                    </View>
-                                </View>
-                            )
-                        // }
+                        return(
+                            <View>
+                                {this.feedDataRender(item,index)}
+                            </View>
+                        )
                     }}
                 />
+            </View>
+        )
+    }
+    feedRender2(){
+        return(
+            <View>
+                {this.state.feedData.map((item,index)=>{
+                    return(
+                        <View>
+                            {this.feedDataRender(item,index)}
+                        </View>
+                    )
+                })}
+            </View>
+        )
+    }
+    feedDataRender(item,index){
+        return(
+            <View style={{borderBottomWidth:(index == this.state.feedData.length-1)?0 : 1,borderColor : colors.greyBorder, marginBottom : 20,paddingBottom : 15}}>
+                <View style={{paddingHorizontal : D.width*5/100}}>
+                    <View style={{flexDirection : 'row',alignItems : 'center'}}>
+                        <View style={{flex : 8/10,flexDirection : 'row',alignItems : 'center'}}>
+                            <View style={{width : D.width * 15/100, height : D.width * 15/100, borderRadius : 50, justifyContent :'center', alignItems : 'center',backgroundColor : colors.greyBorder}}>
+                                {/* <Image style={{width : 20,height : 20,resizeMode='contain'}} source={{uri : item.}}/> */}
+                                <Icon name={'face-profile'} size={55} color={'grey'}/>
+                            </View>
+                            <View style={{paddingLeft : 10}}>
+                                {/* <Text>{item.author}</Text> */}
+                                <Text>{item.author.slice(item.author.search('"')+1,item.author.length-2)}</Text>
+                            </View>
+                        </View>
+                        <View style={{flex : 2/10,alignItems : 'flex-end',justifyContent : 'center'}}>
+                            <TouchableOpacity>
+                                <Icon name={'dots-horizontal'} size={30} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <TouchableWithoutFeedback 
+                        onPress={()=>{
+                            this.props.navigation.navigate('FeedDetail',{data : this.state.feedData[index]})
+                        }}
+                        onPressOut={()=>{
+                            console.log('pressed out')
+                        }}
+                        onLongPress={()=>{
+                            console.log('pressed long')
+                        }}
+                    >
+                        <View style={[style.shadow,{width : D.width * 90/100, height : D.height * 25/100, borderRadius : 10,marginTop : 15,backgroundColor : '#fff'}]}>
+                            <Image source={{uri : item.media.m}} style={{width : D.width * 90/100, height : D.height * 25/100, resizeMode : 'cover',borderRadius : 10}}/>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <View style={{paddingTop : 10,paddingLeft : 5}}>
+                        <Text style={{color : colors.greyBold}}>{item.date_taken}</Text>
+                    </View>
+                    <View style={{flexDirection : 'row',alignItems : 'center',paddingTop : 10,paddingLeft : 0}}>
+                        <View style={{flex : 8/10,flexDirection : 'row',alignItems : 'flex-start'}}>
+                            <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
+                                this.loveLogic(index)
+                            }}>
+                                <Icon name={(item.love? 'heart' : 'heart-outline')} size={23} color={(item.love)? 'red' : colors.black}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
+                                this.props.navigation.navigate('FeedDetail',{data : this.state.feedData[index]})
+                            }}>
+                                <Icon name={'comment-outline'} size={23} color={colors.black}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{paddingRight : 15}} onPress={ async ()=>{
+                                this.toastCall()
+                            }}>
+                                <Icon name={'share-variant'} size={23} color={colors.black}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flex : 2/10,justifyContent : 'center',alignItems : 'flex-end'}}>
+                            <TouchableOpacity onPress={ async ()=>{
+                                this.savePostLogic(index) 
+                            }}>
+                                <Icon name={(item.save? 'bookmark' : 'bookmark-outline')} size={30} color={(item.save)? colors.greyBold : colors.greyBold}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    {
+                        (item.title != '')?
+                            <View style={{paddingTop : 20,paddingLeft : 5}}>
+                                <Text style={{color:colors.black}}>{item.title}</Text>
+                            </View>
+                        :null
+                    }
+                    {
+                        (item.tags != '')?
+                        <View style={{paddingTop : 20,paddingLeft : 5}}>
+                            <Text style={{color:colors.blueButton}}>{item.tags}</Text>
+                        </View> 
+                        :null
+                    }
+                </View>
             </View>
         )
     }
@@ -309,9 +327,7 @@ export class Home extends Component {
         return (
             <View style={{flex : 1, backgroundColor : '#fff',}}>
                 <StatusBar translucent backgroundColor="rgba(255,255,255,0.8)" />
-                <View style={{paddingTop : 30}}>
-                    {/* {(this.state.headerRender)?this.header():null} */}
-                    {/* {this.header()} */}
+                <View style={{paddingTop : 20}}>
                 </View>
                 <ScrollView 
                     // scrollEnabled={this.state.scrollBool}
@@ -349,7 +365,7 @@ export class Home extends Component {
                 >
                     <View style={{paddingBottom : 120}}>
                         <View style={{paddingTop : 30}}>
-                            {this.state.feedData==null? this.feedLoad() : this.feedRender()}
+                            {this.state.feedData==null? this.feedLoad() : this.feedRender2()}
                         </View>
                         <View>
                             {(this.state.scrollBool==false)? 

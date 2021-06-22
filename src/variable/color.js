@@ -5,5 +5,7 @@ export const colors = {
     greyBorder : '#e6e6e6',
     greyBold : '#999999',
 
-    black : 'black'
+    black : 'black',
+
+    redSelect : '#ff4f4f'
 }
