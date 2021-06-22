@@ -16,7 +16,8 @@ export class Profile extends Component {
         super(prosp)
         this.state={
             inputTags : '',
-            data : this.props.user.savePost
+            data : this.props.user.savePost,
+            dataTemp : [],
         }
     }
 
@@ -24,34 +25,31 @@ export class Profile extends Component {
         // console.log(this.props.user.savePost)
     }
 
+    filterData = async (val) =>{
+        this.setState({dataTemp : []},()=>{
+            this.state.data.map((item,index)=>{
+                let tag = item.tags.toString().toLowerCase()
+                if(tag.includes(val)){
+                    console.log(item.tags)
+                }
+                // if(item.tags.includes(val) ){
+                //     console.log('index : ',index,item.tags)
+                // }
+            })
+        })
+    }
+
     searchRender(){
         return(
             <View style={[style.shadow,{backgroundColor : 'white',borderRadius : 10,alignSelf : 'stretch',paddingVertical : 5,paddingHorizontal : 20}]}>
                 <TextInput
+                    style={{paddingVertical : 10}}
                     placeholder={'Search Photo by tags ...'}
                     value={this.state.inputTags}
                     onChangeText={(val)=>{
+                        // this.filterData(val)
                         console.log('tag : ', val)
                         this.setState({inputTags : val})
-                    }}
-                />
-            </View>
-        )
-    }
-    imageThumb(){
-        return(
-            <View>
-                <FlatList
-                    data={this.props.user.savePost}
-                    contentContainerStyle={{flexDirection : "column",paddingBottom:200}}
-                    numColumns ={3}
-                    keyExtractor={(item,index) => index}
-                    renderItem={({item,index})=>{
-                        return(
-                            <View>
-                                {this.imageFlatlist(item,index)}
-                            </View>
-                        )
                     }}
                 />
             </View>
@@ -62,29 +60,41 @@ export class Profile extends Component {
         return(
             <View style={{flexDirection : "row",flexWrap : 'wrap' ,paddingBottom:200}}>
                 {this.state.data.map((item,index)=>{
-                    return(
-                        <View>
-                            {this.imageFlatlist(item,index)}
-                        </View>
-                    )
+                    let tag = item.tags.toString().toLowerCase()
+
+                    if(this.state.inputTags == ''){
+                        return(
+                            <View>
+                                {this.imageFlatlist(item,index)}
+                            </View>
+                        )
+                    }
+                    else if(this.state.inputTags != '' && tag.includes(this.state.inputTags.toLowerCase()) ){
+                        return(
+                            <View>
+                                {this.imageFlatlist(item,index)}
+                            </View>
+                        )
+                    }
+
+                    // else if(this.state.inputTags != '' && item.tags.includes(this.state.inputTags) ){
+                    //     return(
+                    //         <View style={{paddingTop : 20}}>
+                    //             {/* {this.imageFlatlist(item,index)} */}
+                    //             <Text>{index}</Text>
+                    //         </View>
+                    //     )
+                    // }
                 })}
             </View>
         )
     }
     imageFlatlist(item,index){
-        if(item.tags.includes(this.state.inputTags)){
-            return(
-                <View style={{}}>
-                    <Image source={{uri : item.media.m}} style={{width : D.width * 30/100, height : D.width * 30/100,marginRight : D.width*2/100,marginBottom : D.width*2/100}}/>
-                </View>
-            )
-        }else if(this.state.inputTags == ''){
-            return(
-                <View style={{}}>
-                    <Image source={{uri : item.media.m}} style={{width : D.width * 30/100, height : D.width * 30/100,marginRight : D.width*2/100,marginBottom : D.width*2/100}}/>
-                </View>
-            )
-        }
+        return(
+            <View style={{}}>
+                <Image source={{uri : item.media.m}} style={{width : D.width * 30/100, height : D.width * 30/100,marginRight : D.width*2/100,marginBottom : D.width*2/100}}/>
+            </View>
+        )
     }
 
     render() {
