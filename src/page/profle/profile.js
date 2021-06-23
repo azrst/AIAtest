@@ -10,6 +10,7 @@ import {
     Animated,
     TouchableOpacity,
     ImageBackground,
+    Platform,
 } from 'react-native'
 import {connect} from 'react-redux'
 import { colors } from '../../variable/color'
@@ -55,8 +56,10 @@ export class Profile extends Component {
         return(
             <Animated.View style={[style.shadow,{opacity:this.state.fadeAnim},{backgroundColor : 'white',borderRadius : 10,alignSelf : 'stretch',paddingVertical : 5,paddingHorizontal : 20}]}>
                 <TextInput
+                    style={{paddingVertical : Platform.OS=='ios'? 10 : 0}}
                     editable={this.state.searchRender}
                     placeholder={'Search Photo by tags ...'}
+                    placeholderTextColor={colors.greyBold}
                     value={this.state.inputTags}
                     onChangeText={(val)=>{
                         // this.filterData(val)
@@ -106,11 +109,20 @@ export class Profile extends Component {
                 <View>
                     <View style={{flexDirection : "row",flexWrap : 'wrap' ,}}>
                         {this.state.data.map((item,index)=>{
-                            return(
-                                <View>
-                                    {this.imageFlatlist(item,index)}
-                                </View>
-                            )
+                            let tag = item.tags.toString().toLowerCase()
+                            if(this.state.inputTags == ''){
+                                return(
+                                    <View>
+                                        {this.imageFlatlist(item,index)}
+                                    </View>
+                                )
+                            }else if(this.state.inputTags != '' && tag.includes(this.state.inputTags.toLowerCase()) ){
+                                return(
+                                    <View>
+                                        {this.imageFlatlist(item,index)}
+                                    </View>
+                                )
+                            }
                         })}
                     </View>
                 </View>
@@ -118,71 +130,37 @@ export class Profile extends Component {
         )
     }
     imageFlatlist(item,index){
-        if(item.tags.includes(this.state.inputTags)){
-            return(
-                <TouchableOpacity 
-                    // disabled={(this.state.deleteMode)? true : false}
-                    delayLongPress={200}
-                    onLongPress={()=>{
-                        if(this.state.deleteMode){
-                            this.scrollView.scrollTo({y:0})
-                        }else{
-                            let dat = this.state.data
-                            dat[index].save = false
-                            let deldat = this.state.deleteDataSelection
-                            deldat.push(item.media.m)
-                            this.setState({data:dat,deleteDataSelection : deldat},()=>{
-                                this.setState({deleteMode : true})
-                            })
-                        }
-                    }}
-                    onPress={()=>{
-                        if(this.state.deleteMode){
-                            console.log('item selected ',index+1)
-                            this.selectionLogic(item,index)
-                        }
-                    }}
-                >
-                    <View style={{paddingRight : D.width* 0.01,paddingBottom : D.width*0.01}}>
-                        <ImageBackground blurRadius={(this.state.deleteMode && !item.save)? 3 : 0} source={{uri : item.media.m}} style={{width : D.width * 1/ 3.13, height : D.width * 30/100,borderRadius : 2,alignItems : 'center',justifyContent:'center',padding : 5}}>
-                            {this.deleteSelectionRender(item,index)}
-                        </ImageBackground>
-                    </View>
-                </TouchableOpacity>
-            )
-        }else if(this.state.tags == ''){
-            return(
-                <TouchableOpacity 
-                    // disabled={(this.state.deleteMode)? true : false}
-                    delayLongPress={200}
-                    onLongPress={()=>{
-                        if(this.state.deleteMode){
-                            this.scrollView.scrollTo({y:0})
-                        }else{
-                            let dat = this.state.data
-                            dat[index].save = false
-                            let deldat = this.state.deleteDataSelection
-                            deldat.push(item.media.m)
-                            this.setState({data:dat,deleteDataSelection : deldat},()=>{
-                                this.setState({deleteMode : true})
-                            })
-                        }
-                    }}
-                    onPress={()=>{
-                        if(this.state.deleteMode){
-                            console.log('item selected ',index+1)
-                            this.selectionLogic(item,index)
-                        }
-                    }}
-                >
-                    <View style={{paddingRight : D.width* 0.01,paddingBottom : D.width*0.01}}>
-                        <ImageBackground blurRadius={(this.state.deleteMode && !item.save)? 3 : 0} source={{uri : item.media.m}} style={{width : D.width * 1/ 3.13, height : D.width * 30/100,borderRadius : 2,alignItems : 'center',justifyContent:'center',padding : 5}}>
-                            {this.deleteSelectionRender(item,index)}
-                        </ImageBackground>
-                    </View>
-                </TouchableOpacity>
-            )
-        }
+        return(
+            <TouchableOpacity 
+                // disabled={(this.state.deleteMode)? true : false}
+                delayLongPress={200}
+                onLongPress={()=>{
+                    if(this.state.deleteMode){
+                        this.scrollView.scrollTo({y:0})
+                    }else{
+                        let dat = this.state.data
+                        dat[index].save = false
+                        let deldat = this.state.deleteDataSelection
+                        deldat.push(item.media.m)
+                        this.setState({data:dat,deleteDataSelection : deldat},()=>{
+                            this.setState({deleteMode : true})
+                        })
+                    }
+                }}
+                onPress={()=>{
+                    if(this.state.deleteMode){
+                        console.log('item selected ',index+1)
+                        this.selectionLogic(item,index)
+                    }
+                }}
+            >
+                <View style={{paddingRight : D.width* 0.01,paddingBottom : D.width*0.01}}>
+                    <ImageBackground blurRadius={(this.state.deleteMode && !item.save)? 3 : 0} source={{uri : item.media.m}} style={{width : D.width * 1/ 3.13, height : D.width * 30/100,borderRadius : 2,alignItems : 'center',justifyContent:'center',padding : 5}}>
+                        {this.deleteSelectionRender(item,index)}
+                    </ImageBackground>
+                </View>
+            </TouchableOpacity>
+        )
     }
     deleteSelectionRender(item,index){
         if(this.state.deleteMode){
@@ -251,7 +229,7 @@ export class Profile extends Component {
 
     render() {
         return (
-            <View style={{flex : 1,paddingTop : 25,backgroundColor : '#fff'}}>
+            <View style={{flex : 1,paddingTop : 30,backgroundColor : '#fff'}}>
                 <ScrollView showsVerticalScrollIndicator={false} 
                      ref={ref => {this.scrollView = ref}}
                      scrollEventThrottle={async({nativeEvent})=>{}}
